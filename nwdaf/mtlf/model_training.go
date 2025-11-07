@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -72,44 +71,15 @@ func requestModelTraining(c *gin.Context) { //TODO: Change input data 'data' to 
 		fmt.Println(jsonData)
 
 	}
-	return
 }
+
 func AddService(engine *gin.Engine) *gin.RouterGroup {
 	group := engine.Group("/nwdaf-mtlf/v1")
-
-	for _, route := range routes {
-		switch route.Method {
-		case "GET":
-			group.GET(route.Pattern, route.HandlerFunc)
-		case "POST":
-			group.POST(route.Pattern, route.HandlerFunc)
-		case "PUT":
-			group.PUT(route.Pattern, route.HandlerFunc)
-		case "DELETE":
-			group.DELETE(route.Pattern, route.HandlerFunc)
-		case "PATCH":
-			group.PATCH(route.Pattern, route.HandlerFunc)
-		}
-	}
+	group.POST("/", Index)
+	group.POST("/:training", requestModelTraining)
 	return group
 }
 
 func Index(c *gin.Context) {
 	c.String(http.StatusOK, "Hello World!")
-}
-
-var routes = Routes{
-	{
-		"Index",
-		"POST",
-		"/",
-		Index,
-	},
-
-	{
-		"mtlf",
-		strings.ToUpper("Post"),
-		"/:training",
-		requestModelTraining,
-	},
 }

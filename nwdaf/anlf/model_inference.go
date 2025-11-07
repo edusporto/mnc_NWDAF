@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +24,7 @@ type Route struct {
 
 type Routes []Route
 
-func requestModelinference(c *gin.Context) { //TODO: Change input data 'data' to appropriate attribute
+func requestModelInference(c *gin.Context) { //TODO: Change input data 'data' to appropriate attribute
 
 	reqBody, err := c.GetRawData()
 	if err != nil {
@@ -61,42 +60,14 @@ func requestModelinference(c *gin.Context) { //TODO: Change input data 'data' to
 	}
 
 }
+
 func AddService(engine *gin.Engine) *gin.RouterGroup {
 	group := engine.Group("/nwdaf-anlf/v1")
-
-	for _, route := range routes {
-		switch route.Method {
-		case "GET":
-			group.GET(route.Pattern, route.HandlerFunc)
-		case "POST":
-			group.POST(route.Pattern, route.HandlerFunc)
-		case "PUT":
-			group.PUT(route.Pattern, route.HandlerFunc)
-		case "DELETE":
-			group.DELETE(route.Pattern, route.HandlerFunc)
-		case "PATCH":
-			group.PATCH(route.Pattern, route.HandlerFunc)
-		}
-	}
+	group.POST("/", Index)
+	group.POST("/:inference", requestModelInference)
 	return group
 }
 
 func Index(c *gin.Context) {
 	c.String(http.StatusOK, "Hello World!")
-}
-
-var routes = Routes{
-	{
-		"Index",
-		"POST",
-		"/",
-		Index,
-	},
-
-	{
-		"anlf",
-		strings.ToUpper("Post"),
-		"/:infrenece",
-		requestModelinference,
-	},
 }
