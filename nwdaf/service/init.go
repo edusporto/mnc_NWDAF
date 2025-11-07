@@ -116,19 +116,23 @@ func (nwdaf *NWDAF) Start() {
 
 	self := nwdaf_context.NWDAF_Self()
 	util.InitNwdafContext(self)
+	initLog.Infoln("Initiated context")
 
 	addr := fmt.Sprintf("127.0.0.1:24242")
 	router := logger_util.NewGinWithLogrus(logger.GinLog)
 	mtlf.AddService(router)
 	anlf.AddService(router)
+	initLog.Infoln("Added MTLF and AnLF HTTP services")
 
 	profile := consumer.BuildNFInstance(self)
 	var newNrfUri string
 	var err error
+	initLog.Infoln("Built NF instance")
 
 	newNrfUri, self.NfId, err = consumer.SendRegisterNFInstance(self.NrfUri, profile.NfInstanceId, profile)
 	if err == nil {
 		self.NrfUri = newNrfUri
+		initLog.Infof("Registered NF instance at %s with NfId %s", newNrfUri, self.NfId)
 	} else {
 		initLog.Errorf("Send Register NFInstance Error[%s]", err.Error())
 	}
@@ -139,6 +143,7 @@ func (nwdaf *NWDAF) Start() {
 		<-signalChannel
 		os.Exit(0)
 	}()
+	initLog.Infoln("Added SIGTERM channel")
 
 	server, err := http2_util.NewServer(addr, "nwdafsslkey.log", router)
 	if server == nil {
@@ -149,9 +154,10 @@ func (nwdaf *NWDAF) Start() {
 		initLog.Warnln("Initialize HTTP server:", err)
 	}
 	serverScheme := factory.NwdafConfig.Configuration.Sbi.Scheme
-	if serverScheme == "http" {
+	switch serverScheme {
+	case "http":
 		err = server.ListenAndServe()
-	} else if serverScheme == "https" {
+	case "https":
 		err = server.ListenAndServe() //TODO: changing to HTTPS (TLS)
 	}
 
