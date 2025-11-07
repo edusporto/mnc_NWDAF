@@ -123,6 +123,9 @@ func (nwdaf *NWDAF) Start() {
 	mtlf.AddService(router)
 	anlf.AddService(router)
 	initLog.Infoln("Added MTLF and AnLF HTTP services")
+	for _, item := range router.Routes() {
+		println("method:", item.Method, "path:", item.Path)
+	}
 
 	profile := consumer.BuildNFInstance(self)
 	var newNrfUri string
@@ -146,6 +149,7 @@ func (nwdaf *NWDAF) Start() {
 	initLog.Infoln("Added SIGTERM channel")
 
 	server, err := http2_util.NewServer(addr, "nwdafsslkey.log", router)
+	initLog.Infoln(server)
 	if server == nil {
 		initLog.Errorf("Initialize HTTP server failed: %+v", err)
 		return
