@@ -1,7 +1,6 @@
 package mtlf
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -53,13 +52,13 @@ func requestModelTraining(c *gin.Context) { //TODO: Change input data 'data' to 
 	now_t := time.Now().Format("2006-01-02 15:04:05")
 	jsonBody["reqTime"] = now_t
 	jsonBody["data"] = "None"
-	jsonStr, _ := json.Marshal(jsonBody)
+	// jsonStr, _ := json.Marshal(jsonBody)
 	print("*********")
 	transport := &http.Transport{
 		ForceAttemptHTTP2: false,
 	}
 	http := &http.Client{Transport: transport}
-	resp, err := http.Post("http://localhost:9537", "application/json; charset=UTF-8", bytes.NewBuffer([]byte(jsonStr)))
+	resp, err := http.Get("http://fl-training-manager:9537/training")
 	if err != nil {
 		fmt.Println("error: %v", err)
 	} else {

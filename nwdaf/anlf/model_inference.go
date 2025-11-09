@@ -1,7 +1,6 @@
 package anlf
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -35,12 +34,12 @@ func requestModelInference(c *gin.Context) { //TODO: Change input data 'data' to
 	json.Unmarshal(reqBody, &jsonBody)
 	log.Println(jsonBody)
 
-	jsonStr, _ := json.Marshal(jsonBody)
+	// jsonStr, _ := json.Marshal(jsonBody)
 	transport := &http.Transport{
 		ForceAttemptHTTP2: false,
 	}
 	http := &http.Client{Transport: transport}
-	resp, err := http.Post("http://localhost:9537", "application/json; charset=UTF-8", bytes.NewBuffer([]byte(jsonStr)))
+	resp, err := http.Get("http://fl-training-manager:9537/inference")
 	if err != nil {
 		fmt.Println("error: %v", err)
 	} else {
