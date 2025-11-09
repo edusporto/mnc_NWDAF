@@ -118,7 +118,7 @@ func (nwdaf *NWDAF) Start() {
 	util.InitNwdafContext(self)
 	initLog.Infoln("Initiated context")
 
-	addr := fmt.Sprintf("127.0.0.1:24242")
+	addr := "0.0.0.0:24242"
 	router := logger_util.NewGinWithLogrus(logger.GinLog)
 	mtlf.AddService(router)
 	anlf.AddService(router)
